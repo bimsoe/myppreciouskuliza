@@ -9,6 +9,7 @@
 #import "ProductView.h"
 
 #pragma mark - ProductViewCell
+NSString *ProductCellIdentifier = @"product_cell_identifier";
 @implementation ProductViewCell
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -52,6 +53,7 @@
 
 - (void)refresh
 {
+  //can add animation here
   [self updateWithProductData:[self.dataSource dataForProductAtIndexPath:self.productIndexPath]];
 }
 
@@ -69,9 +71,28 @@
   
   [self.productPrice setText:productPrice];
 
-  [self.previousProductButton setHidden:![self.dataSource shouldDisplayPreviousProductButton]];
-  [self.nextProductButton setHidden:![self.dataSource shouldDisplayNextProductButton]];
+  [self.previousProductButton setHidden:![self.dataSource shouldDisplayPreviousProductButtonForProductAtIndexPath:self.productIndexPath]];
+  [self.nextProductButton setHidden:![self.dataSource shouldDisplayNextProductButtonForProductAtIndexPath:self.productIndexPath]];
   
+}
+
+
+
+- (IBAction)buttonPressed:(UIButton *)sender
+{
+  if (sender == self.nextProductButton) {
+    if ([self.delegate respondsToSelector:@selector(nextProductButtonPressed:)]) {
+      [self.delegate nextProductButtonPressed:self.productIndexPath];
+    }
+  } else if (sender == self.previousProductButton) {
+    if ([self.delegate respondsToSelector:@selector(previousProductButtonPressed:)]) {
+      [self.delegate previousProductButtonPressed:self.productIndexPath];
+    }
+  } else if (sender == self.viewAllProducts) {
+    if ([self.delegate respondsToSelector:@selector(showAllProductsButtonPressed:)]) {
+      [self.delegate showAllProductsButtonPressed:self.productIndexPath];
+    }
+  }
 }
 
 

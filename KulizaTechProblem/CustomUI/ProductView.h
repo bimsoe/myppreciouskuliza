@@ -12,20 +12,24 @@
 #pragma mark -
 @protocol ProductDelegate <NSObject>
 @required
-- (void)showAllProductsOfCategory:(ProductCategory)category;
 - (void)buyButtonPressedForProductAtIndexPath:(NSIndexPath *)indexPath;
+@optional
+- (void)showAllProductsButtonPressed:(NSIndexPath *)indexPath;
+- (void)nextProductButtonPressed:(NSIndexPath *)indexPath;
+- (void)previousProductButtonPressed:(NSIndexPath *)indexPath;
 @end
 
 #pragma mark -
 @protocol ProductDatasource <NSObject>
 @required
 - (ProductData *)dataForProductAtIndexPath:(NSIndexPath *)indexPath;
-- (BOOL)shouldDisplayPreviousProductButton;
-- (BOOL)shouldDisplayNextProductButton;
+- (BOOL)shouldDisplayPreviousProductButtonForProductAtIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)shouldDisplayNextProductButtonForProductAtIndexPath:(NSIndexPath *)indexPath;;
 @end
 
 #pragma mark -
 @class ProductView;
+FOUNDATION_EXPORT NSString *ProductCellIdentifier;
 @interface ProductViewCell : UICollectionViewCell
 @property (nonatomic, strong) ProductView *productView;
 @end
