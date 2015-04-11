@@ -18,7 +18,7 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
-  [self.view setBackgroundColor:WHITISH_COLOR];
+  [self.view setBackgroundColor:YELLOWISH_COLOR];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -10,16 +10,16 @@
 #define KulizaTechProblem_Constants_h
 
 #pragma mark - Color Defines
-#define BROWNISH_COLOR  [UIColor colorWithRed:191.0f green:102.0f blue:41.0f alpha:1.0f]
-#define WHITISH_COLOR   [UIColor colorWithRed:239.0f green:239.0f blue:239.0f alpha:1.0f]
-#define PINKISH_COLOR   [UIColor colorWithRed:247.0f green:236.0f blue:229.0f alpha:1.0f]
-#define YELLOWISH_COLOR [UIColor colorWithRed:244.0f green:244.0f blue:232.0f alpha:1.0f]
-#define GRAYISH_COLOR   [UIColor colorWithRed:187.0f green:187.0f blue:187.0f alpha:1.0f]
+#define BROWNISH_COLOR  [UIColor colorWithRed:0.749f green:0.4f blue:0.161f alpha:1.0f]
+#define WHITISH_COLOR   [UIColor colorWithRed:0.937f green:0.937f blue:0.937f alpha:1.0f]
+#define PINKISH_COLOR   [UIColor colorWithRed:0.969f green:0.925f blue:0.898f alpha:1.0f]
+#define YELLOWISH_COLOR [UIColor colorWithRed:0.957f green:0.957f blue:0.91f alpha:1.0f]
+#define GRAYISH_COLOR   [UIColor colorWithRed:0.733f green:0.733f blue:0.733f alpha:1.0f]
 
 #pragma Font Colors
 #define DARK_BLACK_COLOR        [UIColor blackColor]
-#define LIGHT_BLACK_COLOR       [UIColor colorWithRed:102.0f green:102.0f blue:102.0f alpha:1.0f]
-#define VERY_LIGHT_BLACK_COLOR  [UIColor colorWithRed:153.0f green:153.0f blue:153.0f alpha:1.0f]
+#define LIGHT_BLACK_COLOR       [UIColor colorWithRed:0.4f green:0.4f blue:0.4f alpha:1.0f]
+#define VERY_LIGHT_BLACK_COLOR  [UIColor colorWithRed:0.6f green:0.6f blue:0.6f alpha:1.0f]
 
 #pragma mark - Image Defines
 #define BUY_NOW_IMG     @"buy-now"
