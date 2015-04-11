@@ -12,5 +12,7 @@
 + (instancetype)sharedManager;
 
 - (NSURL *)fetchAPIForProductCategory:(ProductCategory)category;
-
+- (NSString *)cachesDirectoryPath;
+- (UIImage *)imageForProduct:(NSInteger)pId;
+- (NSString *)writeImageData:(NSData *)data forProduct:(NSInteger)pId;/**< @returns the path to written file */
 @end

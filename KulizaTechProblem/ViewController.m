@@ -9,12 +9,12 @@
 #import "ViewController.h"
 #import "ProductView.h"
 #import "ServerDataManager.h"
+#import "PlistManager.h"
 
 NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identifier";
 
 #define GET_PRODUCTS_AT_SECTION(section) [self productsInCategory:[self categoryForSection:section]]
-#define GET_PRODUCT_AT_INDEXPATH(indexPath) [self productsInCategory:[self categoryForSection:indexPath.section]][indexPath.item]
-
+#define GET_PRODUCT_AT_INDEXPATH(indexPath) [self productAtIndexPath:indexPath]
 #define KEY_FOR_CATEGORY(category)  INT2STR(category)
 #define ZEROTH_INDEXPATH(indexPath) [NSIndexPath indexPathForItem:0 inSection:indexPath.section]
 @interface ViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, ProductDatasource, ProductDelegate, UICollectionViewDelegateFlowLayout, UIContentContainer, ServerDataReceiver>
@@ -24,6 +24,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 }
 @property (nonatomic, strong) NSMutableDictionary *productsDictionary; /**< Contains {category:[array of product]} pair} */
 @property (nonatomic, strong) NSMutableDictionary *currentlyShownIndexPaths; /**< Contains {category:itemIndexPath pair; Each item refers to the index of Product in its products array */
+@property (nonatomic, strong) NSMutableArray *categoryToSectionMapping;/**< Each index represents a section and object there represent the category */
 @end
 
 @implementation ViewController
@@ -33,8 +34,14 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   // Do any additional setup after loading the view, typically from a nib.
   _productsDictionary = [NSMutableDictionary dictionaryWithCapacity:MAX_CATEGORIES];
   _currentlyShownIndexPaths = [NSMutableDictionary dictionaryWithCapacity:MAX_CATEGORIES];
+  _categoryToSectionMapping = [NSMutableArray arrayWithCapacity:ProductCategoryCount];
+  for (short i = ProductCategory1; i <= ProductCategoryCount; i++) {
+    [_categoryToSectionMapping addObject:@(i)];
+  }
+  
   [self setUpCollectionView];
   [self addPullToRefresh];
+  [self refreshView];
 }
 
 - (void)setUpCollectionView
@@ -58,7 +65,8 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   collectionFlowLayout = [[UICollectionViewFlowLayout alloc] init];
   [collectionFlowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
   CGSize screenSize = [ViewController screenSize];
-  CGSize itemSize = CGSizeMake(screenSize.width, screenSize.width);
+  float width = MIN(screenSize.width, screenSize.height);
+  CGSize itemSize = CGSizeMake(width, width);
   [collectionFlowLayout setItemSize:itemSize];
   [collectionFlowLayout setMinimumInteritemSpacing:5.0f];
   [collectionFlowLayout setMinimumLineSpacing:0.0f];
@@ -128,6 +136,15 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   
   return products[index];
 }
+
+- (ProductData *)productAtIndexPath:(NSIndexPath *)indexPath
+{
+  NSArray *products = [self productsInCategory:[self categoryForSection:indexPath.section]];
+  if (products.count > indexPath.item) {
+    return products[indexPath.item];
+  }
+  return nil;
+}
                              
 #pragma mark -
 #pragma mark Orientation Changes
@@ -161,7 +178,33 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 ///helps in deciding the order in which they are to be displayed
 - (ProductCategory)categoryForSection:(NSInteger)section
 {
-  return (section + 1);// section has a +1 kinda relation with Product Category
+  return [self.categoryToSectionMapping[section] shortValue];
+//  return (section + 1);// section has a +1 kinda relation with Product Category
+}
+
+
+
+- (void)adjustProductDictionaryForCategory:(ProductCategory)category removed:(BOOL)removed
+{
+  if (removed) {
+    [self.categoryToSectionMapping removeObject:@(category)];
+  } else {
+    //added
+    NSUInteger index = [self.categoryToSectionMapping indexOfObjectPassingTest:^BOOL(NSNumber *categoryNum, NSUInteger idx, BOOL *stop) {
+      if (categoryNum.shortValue > category) {
+        return YES;
+        *stop = YES;
+      }
+      return NO;
+    }];
+    
+    if (index != NSNotFound) {
+      [self.categoryToSectionMapping insertObject:@(category) atIndex:index];
+    }
+
+    
+  }
+  
 }
 
 #pragma mark - 
@@ -169,7 +212,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #pragma mark UICollectionView DataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-  return 7;
+  PS_LOG(@"numberOfSectionsInCollectionView : %i", self.productsDictionary.allKeys.count);
   return self.productsDictionary.allKeys.count;
   //I'll be treating each category as one item (as oppose to each category as a separate section) because there is just one product
 }
@@ -194,7 +237,9 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   if (currentIndexPathForCategory == nil) {
     //use default
     currentIndexPathForCategory = indexPath;
+    [self.currentlyShownIndexPaths setObject:indexPath forKey:KEY_FOR_CATEGORY([self categoryForSection:indexPath.section])];
   }
+
   [entityView.productView setProductIndexPath:currentIndexPathForCategory];
   [entityView.productView refresh:nil];
   
@@ -241,6 +286,17 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   return CGSizeZero;
 }
 
+//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+//{
+//  if(GET_PRODUCTS_AT_SECTION(indexPath.section).count == 0) {
+//    //for others nil
+//    return CGSizeZero;
+//  }
+//  
+//  
+//  return ((UICollectionViewFlowLayout *)self.productsCollectionView.collectionViewLayout).itemSize;
+//}
+
 
 #pragma mark - 
 #pragma mark - ProductDatasource
@@ -248,7 +304,11 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 {
   NSArray *products = GET_PRODUCTS_AT_SECTION(indexPath.section);
   if (products.count > indexPath.item) {
-    return products[indexPath.item];
+    ProductData *productData = products[indexPath.item];
+    if (productData.productImage == nil) {
+      productData.productImage = [[PlistManager sharedManager] imageForProduct:productData.productId];
+    }
+    return productData;
   }
   
   //some issue
@@ -327,36 +387,54 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #pragma mark - ServerDataReceiver
 - (void)doneFetchingProducts:(NSArray *)products forCategory:(ProductCategory)category
 {
+  if (products.count == 0) {
+    [self.productsDictionary removeObjectForKey:KEY_FOR_CATEGORY(category)];
+    [self adjustProductDictionaryForCategory:category removed:YES];
+//    [self.productsDictionary setObject:@[] forKey:KEY_FOR_CATEGORY(category)];
+    [self.productsCollectionView reloadData];
+    return;
+  }
+  if (![self.categoryToSectionMapping containsObject:@(category)]) {
+    [self adjustProductDictionaryForCategory:category removed:NO];
+  }
   [self.productsDictionary setObject:products forKey:KEY_FOR_CATEGORY(category)];
   [self.productsCollectionView reloadData];
   for (ProductData *productData in products) {
     if (productData.productImage == nil) {
       [[ServerDataManager sharedManager] downloadImageForProduct:productData];
+      //also meanwhile get local copies if available
+      productData.productImage = [[PlistManager sharedManager] imageForProduct:productData.productId];
     }
   }
   [refreshControl endRefreshing];
 }
 
 
+
 - (void)errorOccured:(NSError *)error whileFetchingProductsForCategory:(ProductCategory)category
 {
-  //some issue
+  //some issuefplist
   [self showAlertWithTitle:@"Some Error Occured"  message:error.localizedDescription];
   [refreshControl endRefreshing];
 }
 
 
-- (void)imageDownloadedAtLocation:(NSURL *)location forProduct:(NSInteger)productId
+- (void)imageDownloadedAtLocation:(NSString *)image_path forProduct:(NSInteger)productId
 {
-  ProductData *productData = [self productDataWithID:productId inCategory:ProductCategoryInvalid];
-  productData.productImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:location]];
+  __block NSIndexPath *matchingIndexPath = nil;
   [self.currentlyShownIndexPaths enumerateKeysAndObjectsUsingBlock:^(NSString *categoryKey, NSIndexPath *indexPath, BOOL *stop) {
     ProductData *product = GET_PRODUCT_AT_INDEXPATH(indexPath);
     if (product.productId == productId) {
-      [((ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:indexPath]).productView refresh:nil];
+      *stop = YES;
+      matchingIndexPath = indexPath;
     }
   }];
+  if (matchingIndexPath) {
+    [((ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:matchingIndexPath]).productView refresh:nil];
+  }
 }
+
+
 
 #pragma mark - 
 #pragma mark - Utilitites Methods
@@ -388,4 +466,5 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   }
 }
 @end
+
 

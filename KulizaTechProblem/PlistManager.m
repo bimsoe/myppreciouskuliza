@@ -39,11 +39,11 @@
 
 - (NSURL *)fetchAPIForProductCategory:(ProductCategory)category
 {
-  NSArray *urls = @[@"https://stg1-hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83386&q[product_taxons_id_eq]=151",
-                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=76",
-                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=95",
-                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=202",
-                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=69"];
+//  NSArray *urls = @[@"https://stg1-hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83386&q[product_taxons_id_eq]=151",
+//                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=76",
+//                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=95",
+//                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=202",
+//                    @"https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83 386&q[product_taxons_id_eq]=69"];
 
   NSString *apiUrlStr = [[NSUserDefaults standardUserDefaults] objectForKey:INT2STR(category)];
   return [NSURL URLWithString:[self urlEncodedString:apiUrlStr]];
@@ -53,6 +53,37 @@
   //  NSString *apiUrlStr = [[NSUserDefaults standardUserDefaults] objectForKey:INT2STR(category)];
 }
 
+- (NSString *)cachesDirectoryPath {
+  NSString* path = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+  
+  if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+    [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:NO attributes:nil error:nil];
+  }
+  
+  return path;
+}
 
+
+- (NSString *)writeImageData:(NSData *)imageData forProduct:(NSInteger)pId
+{
+  NSString *path = [self pathForImageOfProduct:pId];
+  BOOL success = [imageData writeToFile:path atomically:YES];
+  if (success) {
+    return path;
+  }
+  
+  return nil;
+}
+
+- (NSString *)pathForImageOfProduct:(NSInteger)pId
+{
+  return [[self cachesDirectoryPath] stringByAppendingPathComponent:[NSString stringWithFormat:@"%li.png", (long)pId]];
+}
+
+
+- (UIImage *)imageForProduct:(NSInteger)pId
+{
+  return [UIImage imageWithContentsOfFile:[self pathForImageOfProduct:pId]];
+}
 
 @end

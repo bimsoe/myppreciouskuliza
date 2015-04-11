@@ -83,7 +83,7 @@
   }
   
   NSURLRequest *urlRequest = [NSURLRequest requestWithURL:urlForCategory];
-  PS_LOG(@"Url Request : %@", urlRequest);
+  PS_LOG(@"Url (%d) : %@", category, urlForCategory);
   return urlRequest;
 }
 
@@ -91,7 +91,7 @@
 - (void)fetchProductsForAllCategories:(id<ServerDataReceiver>)receiver
 {
   self.serverDataReceiver = receiver;
-  for (short i = ProductCategory1; i <= ProductCategory1; i++) {
+  for (short i = ProductCategory1; i <= ProductCategoryCount; i++) {
     [self fetchProductsForCategory:i receiver:nil];
   }
 }
@@ -151,9 +151,12 @@
   NSURLSessionDownloadTask *imageDownloadTask =
   [self.imageDownloadSession downloadTaskWithURL:product.productImageURL
                                completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+                                 if (error) {
+                                   PS_LOG(@"Some Error Occurred While Downloading image for product : %@; %@", product.                              productName, error);
+                                 }
                                  [self notifyReceiverWithDataArray:nil
                                                      imageLocation:location
-                                                             error:nil
+                                                             error:error
                                                              forId:product.productId];
                                }];
    
@@ -171,14 +174,17 @@
       if (error) {
         //data task failed
         [self.serverDataReceiver errorOccured:error whileFetchingProductsForCategory:d_id];
+        [self.currentDataTasks removeObject:@(d_id)];
       } else if (location == nil) {
         //must be a data task
         [self.serverDataReceiver doneFetchingProducts:dataArray forCategory:d_id];
         [self.currentDataTasks removeObject:@(d_id)];
       } else {
-        //image download
-        [self.serverDataReceiver imageDownloadedAtLocation:location forProduct:d_id];
+        //image downloaded
+        //write to file
+        NSString *imagePath = [[PlistManager sharedManager] writeImageData:[NSData dataWithContentsOfURL:location] forProduct:d_id];
         [self.currentImageDownloads removeObject:@(d_id)];
+        [self.serverDataReceiver imageDownloadedAtLocation:imagePath forProduct:d_id];
       }
     PS_LOG(@"Receiver Notified : dataArray %i: location %@: error %@: d_id %i", (int)dataArray.count, location.absoluteString, error.localizedDescription, (int)d_id);
     }];

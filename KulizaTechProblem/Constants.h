@@ -36,7 +36,8 @@ typedef NS_ENUM(short, ProductCategory) {
   ProductCategory2,
   ProductCategory3,
   ProductCategory4,
-  ProductCategory5
+  ProductCategory5,
+  ProductCategoryCount = 5
 };
 
 #pragma mark - Debug

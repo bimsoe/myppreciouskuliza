@@ -13,7 +13,7 @@
 ///Sends Array of @a ProductData objects
 - (void)doneFetchingProducts:(NSArray *)products forCategory:(ProductCategory)category;// moreAvialable:(BOOL);
 - (void)errorOccured:(NSError *)error whileFetchingProductsForCategory:(ProductCategory)category;
-- (void)imageDownloadedAtLocation:(NSURL *)location forProduct:(NSInteger)productId;
+- (void)imageDownloadedAtLocation:(NSString *)image_path forProduct:(NSInteger)productId;
 @end
 
 

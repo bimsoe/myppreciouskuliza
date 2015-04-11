@@ -56,7 +56,6 @@ NSString * const PD_ProductsKey                     = @"products"; //returns NSA
   NSDictionary *imageDict = jsonDictionary[PD_ProductImageKey];
   productData.productImageURL = [NSURL URLWithString:imageDict[PD_ProductImageURL]];
   NSArray *optionValues = jsonDictionary[PD_ProductOptionValuesKey];
-
   if ((optionValues.count)) {
     NSMutableArray *productOptionArray = [NSMutableArray arrayWithCapacity:optionValues.count];
     for (NSDictionary *optionDict in optionValues) {
