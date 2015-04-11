@@ -26,4 +26,5 @@
 @property (nonatomic, strong) UIImage *productImage;
 @property (nonatomic) CGSize productImageSize; //dont think its needed
 @property (nonatomic) ProductCategory productCategory;
+@property (nonatomic, strong) NSArray *optionValues; /**< Array of additional info; e.g. "Mahogany Finish"*/
 @end

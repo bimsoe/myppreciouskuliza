@@ -22,6 +22,16 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   }
   return self;
 }
+
+
+#if DEBUG
+- (void)prepareForReuse
+{
+  [super prepareForReuse];
+  [self.productView.layer setBorderColor:self.productView.productIndexPath.item % 2 ? [UIColor redColor].CGColor : [UIColor greenColor].CGColor];
+  [self.productView.layer setBorderWidth:2.0f];
+}
+#endif
 @end
 
 
@@ -45,10 +55,42 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:productViewNibName owner:self options:nil];
   for (id currentObject in nibContents) {
     if ([currentObject isKindOfClass:[ProductView class]]) {
+      ProductView *productView = (ProductView *)currentObject;
+      [productView addSwipeGesture];
       return currentObject;
     }
   }
   return nil;
+}
+
+
+- (void)addSwipeGesture
+{
+  UISwipeGestureRecognizer *swipeGestureLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(productViewSwiped:)];
+  [swipeGestureLeft setDirection:UISwipeGestureRecognizerDirectionLeft];
+  [self addGestureRecognizer:swipeGestureLeft];
+  [swipeGestureLeft setCancelsTouchesInView:NO];
+  
+  UISwipeGestureRecognizer *swipeGestureRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(productViewSwiped:)];
+  [swipeGestureRight setDirection:UISwipeGestureRecognizerDirectionRight];
+  [self addGestureRecognizer:swipeGestureRight];
+    [swipeGestureRight setCancelsTouchesInView:NO];
+}
+
+- (void)productViewSwiped:(UISwipeGestureRecognizer *)swipeGesture
+{
+    [swipeGesture setCancelsTouchesInView:NO];
+  if (swipeGesture.direction == UISwipeGestureRecognizerDirectionLeft) {
+    //simulate next button press
+    if (!self.nextProductButton.hidden) {
+      [self buttonPressed:self.nextProductButton];
+    }
+  } else {
+    //simulate previous button press
+    if (!self.previousProductButton.hidden) {
+      [self buttonPressed:self.previousProductButton];
+    }
+  }
 }
 
 - (void)refresh

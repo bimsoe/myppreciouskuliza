@@ -14,8 +14,14 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #define GET_PRODUCTS_AT_SECTION(section) [self productsInCategory:[self categoryForSection:section]]
 #define GET_PRODUCT_AT_INDEXPATH(indexPath) [self productsInCategory:[self categoryForSection:indexPath.section]][indexPath.item]
 
-@interface ViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, ProductDatasource, ProductDelegate>
+#define KEY_FOR_CATEGORY(category)  INT2STR(category)
+#define ZEROTH_INDEXPATH(indexPath) [NSIndexPath indexPathForItem:0 inSection:indexPath.section]
+@interface ViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, ProductDatasource, ProductDelegate, UICollectionViewDelegateFlowLayout, UIContentContainer>
+{
+  UILabel *headerLabel;
+}
 @property NSMutableDictionary *productsDictionary; /**< Contains {category:[array of product]} pair} */
+@property NSMutableDictionary *currentlyShownIndexPaths; /**< Contains {category:itemIndexPath pair; Each item refers to the index of Product in its products array */
 @end
 
 @implementation ViewController
@@ -24,6 +30,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   [super viewDidLoad];
   // Do any additional setup after loading the view, typically from a nib.
   _productsDictionary = [NSMutableDictionary dictionaryWithCapacity:MAX_CATEGORIES];
+  _currentlyShownIndexPaths = [NSMutableDictionary dictionaryWithCapacity:MAX_CATEGORIES];
   [self setUpCollectionView];
 }
 
@@ -48,13 +55,12 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   collectionFlowLayout = [[UICollectionViewFlowLayout alloc] init];
   [collectionFlowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
   CGSize screenSize = [ViewController screenSize];
-  CGSize itemSize = CGSizeMake(screenSize.width, 250.0f);
+  CGSize itemSize = CGSizeMake(screenSize.width, screenSize.width);
   [collectionFlowLayout setItemSize:itemSize];
-  [collectionFlowLayout setMinimumInteritemSpacing:10.0f];
-  [collectionFlowLayout setMinimumLineSpacing:5.0f];
+  [collectionFlowLayout setMinimumInteritemSpacing:5.0f];
+  [collectionFlowLayout setMinimumLineSpacing:0.0f];
   [collectionFlowLayout setSectionInset:UIEdgeInsetsZero];// UIEdgeInsetsMake(0, 5.0f, 0, 50f)];
-  [collectionFlowLayout setHeaderReferenceSize:CGSizeMake(0, 30.0f)];
-  
+//  [collectionFlowLayout setHeaderReferenceSize:CGSizeMake(0, 30.0f)];
   return collectionFlowLayout;
 }
 
@@ -69,11 +75,33 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   // Dispose of any resources that can be recreated.
 }
 
+#pragma mark -
+#pragma mark Orientation Changes
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+  CGSize screenSize = [ViewController screenSize];
+  CGRect frame = headerLabel.frame;
+  frame.size.width = screenSize.width;
+  [headerLabel setFrame:frame];
+
+}
+#pragma mark UIContentContainer Protocol
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+  CGRect frame = headerLabel.frame;
+  frame.size.width = size.width;
+  [headerLabel setFrame:frame];
+#if DEBUG
+  [self.productsCollectionView.layer setBorderColor:[UIColor redColor].CGColor];
+  [self.productsCollectionView.layer setBorderWidth:1.0f];
+#endif
+}
+
 
 #pragma mark - Products Fetching
 - (NSMutableArray *)productsInCategory:(ProductCategory)category
 {
-  return self.productsDictionary[INT2STR(category)];
+  return self.productsDictionary[KEY_FOR_CATEGORY(category)];
 }
 
 ///helps in deciding the order in which they are to be displayed
@@ -87,12 +115,14 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #pragma mark UICollectionView DataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
+  return 7;
   return self.productsDictionary.allKeys.count;
   //I'll be treating each category as one item (as oppose to each category as a separate section) because there is just one product
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+  return 1;
   NSUInteger numberOfProducts = GET_PRODUCTS_AT_SECTION(section).count;
   SM_LOG(@"Number of Products in category %i : %u", [self categoryForSection:section], (uint)numberOfProducts);
   return numberOfProducts;
@@ -105,7 +135,13 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   ProductViewCell *entityView = (ProductViewCell *) [collectionView dequeueReusableCellWithReuseIdentifier:ProductCellIdentifier forIndexPath:indexPath];
   [entityView.productView setDataSource:self];
   [entityView.productView setDelegate:self];
-  [entityView.productView setProductIndexPath:indexPath];
+  //get index path from currentlyShownIndexPaths
+  NSIndexPath *currentIndexPathForCategory = [self.currentlyShownIndexPaths objectForKey:KEY_FOR_CATEGORY([self categoryForSection:indexPath.section])];
+  if (currentIndexPathForCategory == nil) {
+    //use default
+    currentIndexPathForCategory = indexPath;
+  }
+  [entityView.productView setProductIndexPath:currentIndexPathForCategory];
   [entityView.productView refresh];
   
   return entityView;
@@ -119,8 +155,17 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
                                     [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                        withReuseIdentifier:ProductCollectionHeaderIdentifier
                                                                               forIndexPath:indexPath];
-  
-  
+  static NSInteger HeaderLabelTag = 101;
+  if (headerLabel == nil) {
+    //add label
+    headerLabel = [[UILabel alloc] initWithFrame: CGRectMake(0, 0, collectionView.frame.size.width, 30.0f)];
+    [headerLabel setTextAlignment:NSTextAlignmentCenter];
+    [headerLabel setTag:HeaderLabelTag];//so that we dont add it over and over again
+    [headerView addSubview:headerLabel];
+    [headerLabel setCenter:headerView.center];
+  }
+  //text can be updated based on what group are we seeing
+  [headerLabel setText:@"DINING TABLES & SETS"];
   return headerView;
 }
 
@@ -129,6 +174,19 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 {
   SM_LOG(@"Product Selected at Index Path : %@", indexPath);
 }
+
+#pragma mark UICollectionViewDelegateFlowLayout
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+  //only for 1st section
+  if (section == 0) {
+      return CGSizeMake(0, 30.0f);
+  }
+  
+  //for others nil
+  return CGSizeZero;
+}
+
 
 #pragma mark - 
 #pragma mark - ProductDatasource
@@ -148,14 +206,14 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 - (BOOL)shouldDisplayPreviousProductButtonForProductAtIndexPath:(NSIndexPath *)indexPath;
 {
   //you can add some additional conditions here;
-  return indexPath.item == 0;
+  return indexPath.item != 0;
 }
 
 
 - (BOOL)shouldDisplayNextProductButtonForProductAtIndexPath:(NSIndexPath *)indexPath;
 {
   NSUInteger productCount = GET_PRODUCTS_AT_SECTION(indexPath.section).count;
-  return indexPath.item == (productCount - 1);
+  return indexPath.item < (productCount - 1);
 }
 
 
@@ -193,10 +251,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
     return;
   }
   
-  //update the indexPath
-  ProductViewCell *productCell = (ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:indexPath];
-  [productCell.productView setProductIndexPath:[NSIndexPath indexPathForItem:indexPath.item - 1 inSection:indexPath.section]];
-  [productCell.productView refresh];      
+  [self refreshProductCellAtIndexPath:indexPath withItem:indexPath.item - 1];
 }
 
 
@@ -208,12 +263,21 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
     return;
   }
   
-  //update the indexPath
-  ProductViewCell *productCell = (ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:indexPath];
-  [productCell.productView setProductIndexPath:[NSIndexPath indexPathForItem:indexPath.item + 1 inSection:indexPath.section]];
-  [productCell.productView refresh];
+  [self refreshProductCellAtIndexPath:indexPath withItem:indexPath.item + 1];
 }
 
+
+- (void)refreshProductCellAtIndexPath:(NSIndexPath *)oldIndexPath withItem:(NSInteger)item
+{
+  NSIndexPath *newIndexPath = [NSIndexPath indexPathForItem:item inSection:oldIndexPath.section];
+  [self.currentlyShownIndexPaths setObject:newIndexPath forKey:KEY_FOR_CATEGORY([self categoryForSection:oldIndexPath.section])];
+  
+  //update the indexPath
+  ProductViewCell *productCell = (ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:ZEROTH_INDEXPATH(oldIndexPath)];
+  [productCell.productView setProductIndexPath:newIndexPath];
+  [productCell.productView refresh];
+
+}
 
 
 #pragma mark - 

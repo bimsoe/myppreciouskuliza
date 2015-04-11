@@ -18,6 +18,9 @@
 		586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */ = {isa = PBXBuildFile; fileRef = 586AFE5F1AD940B2003DA6A3 /* ProductView.m */; };
 		586AFE631AD942BB003DA6A3 /* ProductData.m in Sources */ = {isa = PBXBuildFile; fileRef = 586AFE621AD942BB003DA6A3 /* ProductData.m */; };
 		58AE88771AD94876000875E4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AE88761AD94876000875E4 /* UIKit.framework */; };
+		58AE887B1AD96CD3000875E4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AE887A1AD96CD2000875E4 /* QuartzCore.framework */; };
+		58AE887F1AD9896F000875E4 /* ServerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AE887E1AD9896F000875E4 /* ServerDataManager.m */; };
+		58AE88821AD989D1000875E4 /* ServerDataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AE88811AD989D1000875E4 /* ServerDataParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,11 @@
 		586AFE611AD942BB003DA6A3 /* ProductData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductData.h; sourceTree = "<group>"; };
 		586AFE621AD942BB003DA6A3 /* ProductData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductData.m; sourceTree = "<group>"; };
 		58AE88761AD94876000875E4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		58AE887A1AD96CD2000875E4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		58AE887D1AD9896F000875E4 /* ServerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerDataManager.h; sourceTree = "<group>"; };
+		58AE887E1AD9896F000875E4 /* ServerDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerDataManager.m; sourceTree = "<group>"; };
+		58AE88801AD989D1000875E4 /* ServerDataParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerDataParser.h; sourceTree = "<group>"; };
+		58AE88811AD989D1000875E4 /* ServerDataParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerDataParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AE887B1AD96CD3000875E4 /* QuartzCore.framework in Frameworks */,
 				58AE88771AD94876000875E4 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -75,6 +84,7 @@
 		582BE6BF1AD92D5C00949BDD = {
 			isa = PBXGroup;
 			children = (
+				58AE887A1AD96CD2000875E4 /* QuartzCore.framework */,
 				58AE88761AD94876000875E4 /* UIKit.framework */,
 				582BE6CA1AD92D5C00949BDD /* KulizaTechProblem */,
 				582BE6E41AD92D5D00949BDD /* KulizaTechProblemTests */,
@@ -94,6 +104,7 @@
 		582BE6CA1AD92D5C00949BDD /* KulizaTechProblem */ = {
 			isa = PBXGroup;
 			children = (
+				58AE887C1AD98940000875E4 /* NetworkStuff */,
 				586AFE5D1AD940A2003DA6A3 /* CustomUI */,
 				58F55B011AD937A200F7C5FE /* Resources */,
 				582BE6CF1AD92D5C00949BDD /* AppDelegate.h */,
@@ -141,6 +152,17 @@
 				586AFE621AD942BB003DA6A3 /* ProductData.m */,
 			);
 			path = CustomUI;
+			sourceTree = "<group>";
+		};
+		58AE887C1AD98940000875E4 /* NetworkStuff */ = {
+			isa = PBXGroup;
+			children = (
+				58AE887D1AD9896F000875E4 /* ServerDataManager.h */,
+				58AE887E1AD9896F000875E4 /* ServerDataManager.m */,
+				58AE88801AD989D1000875E4 /* ServerDataParser.h */,
+				58AE88811AD989D1000875E4 /* ServerDataParser.m */,
+			);
+			name = NetworkStuff;
 			sourceTree = "<group>";
 		};
 		58F55B011AD937A200F7C5FE /* Resources */ = {
@@ -256,7 +278,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AE887F1AD9896F000875E4 /* ServerDataManager.m in Sources */,
 				586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */,
+				58AE88821AD989D1000875E4 /* ServerDataParser.m in Sources */,
 				582BE6D41AD92D5C00949BDD /* ViewController.m in Sources */,
 				582BE6D11AD92D5C00949BDD /* AppDelegate.m in Sources */,
 				586AFE631AD942BB003DA6A3 /* ProductData.m in Sources */,
