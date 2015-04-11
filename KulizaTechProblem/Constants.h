@@ -31,6 +31,7 @@
 #define INT2STR(num)  [NSString stringWithFormat:@"%li", (long int)num]
 
 typedef NS_ENUM(short, ProductCategory) {
+  ProductCategoryInvalid = -1,
   ProductCategory1 = 1,
   ProductCategory2,
   ProductCategory3,
@@ -41,9 +42,9 @@ typedef NS_ENUM(short, ProductCategory) {
 #pragma mark - Debug
 #define DEBUG 1
 #if DEBUG
-  #define SM_LOG(FORMAT, ...) printf("%s\n", [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String])
+  #define PS_LOG(FORMAT, ...) printf("%s\n", [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String])
 #else
-  #define SM_LOG(...)
+  #define PS_LOG(...)
 #endif
 
 #endif

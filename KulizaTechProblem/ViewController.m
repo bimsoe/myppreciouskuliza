@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "ProductView.h"
+#import "ServerDataManager.h"
 
 NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identifier";
 
@@ -16,12 +17,13 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 
 #define KEY_FOR_CATEGORY(category)  INT2STR(category)
 #define ZEROTH_INDEXPATH(indexPath) [NSIndexPath indexPathForItem:0 inSection:indexPath.section]
-@interface ViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, ProductDatasource, ProductDelegate, UICollectionViewDelegateFlowLayout, UIContentContainer>
+@interface ViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, ProductDatasource, ProductDelegate, UICollectionViewDelegateFlowLayout, UIContentContainer, ServerDataReceiver>
 {
   UILabel *headerLabel;
+  UIRefreshControl *refreshControl;
 }
-@property NSMutableDictionary *productsDictionary; /**< Contains {category:[array of product]} pair} */
-@property NSMutableDictionary *currentlyShownIndexPaths; /**< Contains {category:itemIndexPath pair; Each item refers to the index of Product in its products array */
+@property (nonatomic, strong) NSMutableDictionary *productsDictionary; /**< Contains {category:[array of product]} pair} */
+@property (nonatomic, strong) NSMutableDictionary *currentlyShownIndexPaths; /**< Contains {category:itemIndexPath pair; Each item refers to the index of Product in its products array */
 @end
 
 @implementation ViewController
@@ -32,6 +34,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   _productsDictionary = [NSMutableDictionary dictionaryWithCapacity:MAX_CATEGORIES];
   _currentlyShownIndexPaths = [NSMutableDictionary dictionaryWithCapacity:MAX_CATEGORIES];
   [self setUpCollectionView];
+  [self addPullToRefresh];
 }
 
 - (void)setUpCollectionView
@@ -75,6 +78,57 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   // Dispose of any resources that can be recreated.
 }
 
+
+- (void)addPullToRefresh
+{
+  refreshControl= [[UIRefreshControl alloc] init];
+  refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
+  [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
+  [self.productsCollectionView addSubview:refreshControl];
+}
+
+- (void)refreshView
+{
+  [[ServerDataManager sharedManager] fetchProductsForAllCategories:self];
+}
+
+
+- (ProductData *)productDataWithID:(NSInteger)pId inCategory:(ProductCategory)category
+{
+  __block ProductData *pData = nil;
+  if (category == ProductCategoryInvalid) {
+    //go though all categories in productsDictionary
+    [self.productsDictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSArray *products, BOOL *stop) {
+      pData = [self productDataWithID:pId inProducts:products];
+      if (pData) {
+        *stop = YES;
+      }
+    }];
+  } else {
+    pData = [self productDataWithID:pId inProducts:[self productsInCategory:category]];
+  }
+  
+  return pData;
+}
+
+
+- (ProductData *)productDataWithID:(NSInteger)pId inProducts:(NSArray *)products
+{
+  NSUInteger index = [products indexOfObjectPassingTest:^BOOL(ProductData *productData, NSUInteger idx, BOOL *stop) {
+    if (productData.productId == pId) {
+      *stop = YES;
+      return YES;
+    }
+    return NO;
+  }];
+  
+  if(index == NSNotFound) {
+    return nil;
+  }
+  
+  return products[index];
+}
+                             
 #pragma mark -
 #pragma mark Orientation Changes
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -124,7 +178,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 {
   return 1;
   NSUInteger numberOfProducts = GET_PRODUCTS_AT_SECTION(section).count;
-  SM_LOG(@"Number of Products in category %i : %u", [self categoryForSection:section], (uint)numberOfProducts);
+  PS_LOG(@"Number of Products in category %i : %u", [self categoryForSection:section], (uint)numberOfProducts);
   return numberOfProducts;
 }
 
@@ -142,7 +196,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
     currentIndexPathForCategory = indexPath;
   }
   [entityView.productView setProductIndexPath:currentIndexPathForCategory];
-  [entityView.productView refresh];
+  [entityView.productView refresh:nil];
   
   return entityView;
 
@@ -172,7 +226,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #pragma mark UICollectionView Delegate
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  SM_LOG(@"Product Selected at Index Path : %@", indexPath);
+  PS_LOG(@"Product Selected at Index Path : %@", indexPath);
 }
 
 #pragma mark UICollectionViewDelegateFlowLayout
@@ -193,12 +247,12 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 - (ProductData *)dataForProductAtIndexPath:(NSIndexPath *)indexPath
 {
   NSArray *products = GET_PRODUCTS_AT_SECTION(indexPath.section);
-  if (products.count -1 > indexPath.item) {
+  if (products.count > indexPath.item) {
     return products[indexPath.item];
   }
   
   //some issue
-  SM_LOG(@"products.count -1 > indexPath.item Failed");
+  PS_LOG(@"products.count -1 > indexPath.item Failed");
   return nil;
 }
 
@@ -223,18 +277,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   ProductData *product = GET_PRODUCT_AT_INDEXPATH(indexPath);
   NSString *message = [NSString stringWithFormat:@"%@ was added to cart!!", product.productName];
   NSString *title = @"Added to Cart";
-  if ([UIAlertController class]) {
-    //prefer this
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
-                                                                   message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-      //You can add some code here for more customization
-    }]];
-  } else {
-    //the good old UIAlertView
-    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] show];
-  }
+  [self showAlertWithTitle:title message:message];
 }
 
 - (void)showAllProductsButtonPressed:(NSIndexPath *)indexPath
@@ -275,10 +318,45 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   //update the indexPath
   ProductViewCell *productCell = (ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:ZEROTH_INDEXPATH(oldIndexPath)];
   [productCell.productView setProductIndexPath:newIndexPath];
-  [productCell.productView refresh];
+  NSString *direction = (item > oldIndexPath.item) ? kCATransitionFromRight : kCATransitionFromLeft;
+  [productCell.productView refresh:direction];
 
 }
 
+
+#pragma mark - ServerDataReceiver
+- (void)doneFetchingProducts:(NSArray *)products forCategory:(ProductCategory)category
+{
+  [self.productsDictionary setObject:products forKey:KEY_FOR_CATEGORY(category)];
+  [self.productsCollectionView reloadData];
+  for (ProductData *productData in products) {
+    if (productData.productImage == nil) {
+      [[ServerDataManager sharedManager] downloadImageForProduct:productData];
+    }
+  }
+  [refreshControl endRefreshing];
+}
+
+
+- (void)errorOccured:(NSError *)error whileFetchingProductsForCategory:(ProductCategory)category
+{
+  //some issue
+  [self showAlertWithTitle:@"Some Error Occured"  message:error.localizedDescription];
+  [refreshControl endRefreshing];
+}
+
+
+- (void)imageDownloadedAtLocation:(NSURL *)location forProduct:(NSInteger)productId
+{
+  ProductData *productData = [self productDataWithID:productId inCategory:ProductCategoryInvalid];
+  productData.productImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:location]];
+  [self.currentlyShownIndexPaths enumerateKeysAndObjectsUsingBlock:^(NSString *categoryKey, NSIndexPath *indexPath, BOOL *stop) {
+    ProductData *product = GET_PRODUCT_AT_INDEXPATH(indexPath);
+    if (product.productId == productId) {
+      [((ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:indexPath]).productView refresh:nil];
+    }
+  }];
+}
 
 #pragma mark - 
 #pragma mark - Utilitites Methods
@@ -294,6 +372,20 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 }
 
 
-
+- (void)showAlertWithTitle:(NSString *)title message:(NSString *)message
+{
+  if ([UIAlertController class]) {
+    //prefer this
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+      //You can add some code here for more customization
+    }]];
+  } else {
+    //the good old UIAlertView
+    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] show];
+  }
+}
 @end
 

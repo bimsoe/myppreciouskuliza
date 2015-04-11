@@ -93,11 +93,43 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   }
 }
 
-- (void)refresh
+- (void)refresh:(NSString *)direction
 {
   //can add animation here
   [self updateWithProductData:[self.dataSource dataForProductAtIndexPath:self.productIndexPath]];
+  if (direction) {
+    [self animateIndirection:direction];
+  }
+  
 }
+
+
+- (CATransition *)animateIndirection:(NSString *)direction
+{
+  CATransition *transition = [CATransition animation];
+  transition.duration = 0.2f;
+  transition.delegate = self;
+  //  transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+  transition.type = kCATransitionPush;//kCATransitionFade;//
+  transition.subtype = direction;
+  [self.layer addAnimation:transition forKey:nil];
+  return transition;
+}
+
+- (void)moveFromView:(UIView *)fromView toView:(UIView *)toView direction:(NSString *)direction
+{
+  CATransition *transition = [CATransition animation];
+  [transition setDuration:0.3f];
+  transition.type = kCATransitionPush;//kCATransitionPush;
+  transition.subtype = direction;//kCATransitionFromRight
+  [transition setFillMode:kCAFillModeBoth];
+  [transition setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+  [fromView.layer addAnimation:transition forKey:kCATransition];
+  
+  transition.type = kCATransitionFade;//remove this line to change the aniim type
+  [toView.layer addAnimation:transition forKey:kCATransition];
+}
+
 
 - (void)updateWithProductData:(ProductData *)product_data
 {
@@ -137,5 +169,16 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   }
 }
 
+
+#pragma mark - CATransitionDelegate
+- (void)animationDidStart:(CAAnimation *)anim
+{
+  [[UIApplication sharedApplication] beginIgnoringInteractionEvents];  
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+{
+  [[UIApplication sharedApplication] endIgnoringInteractionEvents];
+}
 
 @end

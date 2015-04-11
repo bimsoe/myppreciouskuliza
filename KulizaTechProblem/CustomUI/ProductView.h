@@ -49,7 +49,7 @@ FOUNDATION_EXPORT NSString *ProductCellIdentifier;
  *  Call after setting @b delegate, @b datasource and @b productIndexPath
  *  @code [self updateWithProductData:[self.dataSource dataForProductAtIndexPath:self.productIndexPath]]; @endcode
  */
-- (void)refresh;
+- (void)refresh:(NSString *)direction;
 - (void)updateWithProductData:(ProductData *)product_data;
 
 + (ProductView *)getProductView;

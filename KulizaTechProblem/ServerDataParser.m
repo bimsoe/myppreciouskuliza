@@ -84,7 +84,7 @@ NSString * const PD_ProductsKey                     = @"products"; //returns NSA
   for (NSDictionary *productDictionary in products) {
     [productDataArray addObject:[self productDataFromProductJSON:productDictionary]];
   }
-  
+  PS_LOG(@"Parsing Done : %@", productDataArray);
   return productDataArray;
 }
 

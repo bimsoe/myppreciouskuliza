@@ -13,15 +13,17 @@
 ///Sends Array of @a ProductData objects
 - (void)doneFetchingProducts:(NSArray *)products forCategory:(ProductCategory)category;// moreAvialable:(BOOL);
 - (void)errorOccured:(NSError *)error whileFetchingProductsForCategory:(ProductCategory)category;
+- (void)imageDownloadedAtLocation:(NSURL *)location forProduct:(NSInteger)productId;
 @end
 
 
 
-
+@class ProductData;
 @interface ServerDataManager : NSObject
+@property (nonatomic, weak) id<ServerDataReceiver> serverDataReceiver;/**< Right now kept just one; otherwise we can have a dictionary with @{category:array of receivers} pair */
 + (instancetype)sharedManager;
-
+- (void)fetchProductsForAllCategories:(id<ServerDataReceiver>)receiver;
 - (void)fetchProductsForCategory:(ProductCategory)category receiver:(id<ServerDataReceiver>)receiver;
 - (BOOL)isFetchingProductsForCategory:(ProductCategory)category;
-
+- (void)downloadImageForProduct:(ProductData *)product;
 @end

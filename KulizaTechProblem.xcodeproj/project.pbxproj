@@ -21,6 +21,8 @@
 		58AE887B1AD96CD3000875E4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AE887A1AD96CD2000875E4 /* QuartzCore.framework */; };
 		58AE887F1AD9896F000875E4 /* ServerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AE887E1AD9896F000875E4 /* ServerDataManager.m */; };
 		58AE88821AD989D1000875E4 /* ServerDataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AE88811AD989D1000875E4 /* ServerDataParser.m */; };
+		58AE88841AD9A1EF000875E4 /* FetchAPIs.plist in Resources */ = {isa = PBXBuildFile; fileRef = 58AE88831AD9A1EF000875E4 /* FetchAPIs.plist */; };
+		58AE88871AD9A279000875E4 /* PlistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AE88861AD9A279000875E4 /* PlistManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,9 @@
 		58AE887E1AD9896F000875E4 /* ServerDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerDataManager.m; sourceTree = "<group>"; };
 		58AE88801AD989D1000875E4 /* ServerDataParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerDataParser.h; sourceTree = "<group>"; };
 		58AE88811AD989D1000875E4 /* ServerDataParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerDataParser.m; sourceTree = "<group>"; };
+		58AE88831AD9A1EF000875E4 /* FetchAPIs.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = FetchAPIs.plist; sourceTree = "<group>"; };
+		58AE88851AD9A279000875E4 /* PlistManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlistManager.h; sourceTree = "<group>"; };
+		58AE88861AD9A279000875E4 /* PlistManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlistManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +166,8 @@
 				58AE887E1AD9896F000875E4 /* ServerDataManager.m */,
 				58AE88801AD989D1000875E4 /* ServerDataParser.h */,
 				58AE88811AD989D1000875E4 /* ServerDataParser.m */,
+				58AE88851AD9A279000875E4 /* PlistManager.h */,
+				58AE88861AD9A279000875E4 /* PlistManager.m */,
 			);
 			name = NetworkStuff;
 			sourceTree = "<group>";
@@ -172,6 +179,7 @@
 				582BE6D81AD92D5C00949BDD /* Images.xcassets */,
 				582BE6D51AD92D5C00949BDD /* Main.storyboard */,
 				586AFE5B1AD9398A003DA6A3 /* ProductView.xib */,
+				58AE88831AD9A1EF000875E4 /* FetchAPIs.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -257,6 +265,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AE88841AD9A1EF000875E4 /* FetchAPIs.plist in Resources */,
 				586AFE5C1AD9398A003DA6A3 /* ProductView.xib in Resources */,
 				582BE6D71AD92D5C00949BDD /* Main.storyboard in Resources */,
 				582BE6DC1AD92D5C00949BDD /* LaunchScreen.xib in Resources */,
@@ -278,6 +287,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AE88871AD9A279000875E4 /* PlistManager.m in Sources */,
 				58AE887F1AD9896F000875E4 /* ServerDataManager.m in Sources */,
 				586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */,
 				58AE88821AD989D1000875E4 /* ServerDataParser.m in Sources */,
