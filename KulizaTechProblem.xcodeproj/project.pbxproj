@@ -14,6 +14,10 @@
 		582BE6D91AD92D5C00949BDD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 582BE6D81AD92D5C00949BDD /* Images.xcassets */; };
 		582BE6DC1AD92D5C00949BDD /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 582BE6DA1AD92D5C00949BDD /* LaunchScreen.xib */; };
 		582BE6E81AD92D5D00949BDD /* KulizaTechProblemTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 582BE6E71AD92D5D00949BDD /* KulizaTechProblemTests.m */; };
+		586AFE5C1AD9398A003DA6A3 /* ProductView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 586AFE5B1AD9398A003DA6A3 /* ProductView.xib */; };
+		586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */ = {isa = PBXBuildFile; fileRef = 586AFE5F1AD940B2003DA6A3 /* ProductView.m */; };
+		586AFE631AD942BB003DA6A3 /* ProductData.m in Sources */ = {isa = PBXBuildFile; fileRef = 586AFE621AD942BB003DA6A3 /* ProductData.m */; };
+		58AE88771AD94876000875E4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AE88761AD94876000875E4 /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,12 +39,18 @@
 		582BE6D21AD92D5C00949BDD /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		582BE6D31AD92D5C00949BDD /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		582BE6D61AD92D5C00949BDD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		582BE6D81AD92D5C00949BDD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		582BE6D81AD92D5C00949BDD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ../Images.xcassets; sourceTree = "<group>"; };
 		582BE6DB1AD92D5C00949BDD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		582BE6E11AD92D5D00949BDD /* KulizaTechProblemTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KulizaTechProblemTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		582BE6E61AD92D5D00949BDD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		582BE6E71AD92D5D00949BDD /* KulizaTechProblemTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KulizaTechProblemTests.m; sourceTree = "<group>"; };
 		582BE6F11AD92E0100949BDD /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		586AFE5B1AD9398A003DA6A3 /* ProductView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductView.xib; sourceTree = "<group>"; };
+		586AFE5E1AD940B2003DA6A3 /* ProductView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductView.h; sourceTree = "<group>"; };
+		586AFE5F1AD940B2003DA6A3 /* ProductView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductView.m; sourceTree = "<group>"; };
+		586AFE611AD942BB003DA6A3 /* ProductData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductData.h; sourceTree = "<group>"; };
+		586AFE621AD942BB003DA6A3 /* ProductData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductData.m; sourceTree = "<group>"; };
+		58AE88761AD94876000875E4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AE88771AD94876000875E4 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +75,7 @@
 		582BE6BF1AD92D5C00949BDD = {
 			isa = PBXGroup;
 			children = (
+				58AE88761AD94876000875E4 /* UIKit.framework */,
 				582BE6CA1AD92D5C00949BDD /* KulizaTechProblem */,
 				582BE6E41AD92D5D00949BDD /* KulizaTechProblemTests */,
 				582BE6C91AD92D5C00949BDD /* Products */,
@@ -82,13 +94,12 @@
 		582BE6CA1AD92D5C00949BDD /* KulizaTechProblem */ = {
 			isa = PBXGroup;
 			children = (
+				586AFE5D1AD940A2003DA6A3 /* CustomUI */,
+				58F55B011AD937A200F7C5FE /* Resources */,
 				582BE6CF1AD92D5C00949BDD /* AppDelegate.h */,
 				582BE6D01AD92D5C00949BDD /* AppDelegate.m */,
 				582BE6D21AD92D5C00949BDD /* ViewController.h */,
 				582BE6D31AD92D5C00949BDD /* ViewController.m */,
-				582BE6D51AD92D5C00949BDD /* Main.storyboard */,
-				582BE6D81AD92D5C00949BDD /* Images.xcassets */,
-				582BE6DA1AD92D5C00949BDD /* LaunchScreen.xib */,
 				582BE6CB1AD92D5C00949BDD /* Supporting Files */,
 				582BE6F11AD92E0100949BDD /* Constants.h */,
 			);
@@ -119,6 +130,28 @@
 				582BE6E61AD92D5D00949BDD /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		586AFE5D1AD940A2003DA6A3 /* CustomUI */ = {
+			isa = PBXGroup;
+			children = (
+				586AFE5E1AD940B2003DA6A3 /* ProductView.h */,
+				586AFE5F1AD940B2003DA6A3 /* ProductView.m */,
+				586AFE611AD942BB003DA6A3 /* ProductData.h */,
+				586AFE621AD942BB003DA6A3 /* ProductData.m */,
+			);
+			path = CustomUI;
+			sourceTree = "<group>";
+		};
+		58F55B011AD937A200F7C5FE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				582BE6DA1AD92D5C00949BDD /* LaunchScreen.xib */,
+				582BE6D81AD92D5C00949BDD /* Images.xcassets */,
+				582BE6D51AD92D5C00949BDD /* Main.storyboard */,
+				586AFE5B1AD9398A003DA6A3 /* ProductView.xib */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				586AFE5C1AD9398A003DA6A3 /* ProductView.xib in Resources */,
 				582BE6D71AD92D5C00949BDD /* Main.storyboard in Resources */,
 				582BE6DC1AD92D5C00949BDD /* LaunchScreen.xib in Resources */,
 				582BE6D91AD92D5C00949BDD /* Images.xcassets in Resources */,
@@ -222,8 +256,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */,
 				582BE6D41AD92D5C00949BDD /* ViewController.m in Sources */,
 				582BE6D11AD92D5C00949BDD /* AppDelegate.m in Sources */,
+				586AFE631AD942BB003DA6A3 /* ProductData.m in Sources */,
 				582BE6CE1AD92D5C00949BDD /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -253,6 +289,7 @@
 				582BE6D61AD92D5C00949BDD /* Base */,
 			);
 			name = Main.storyboard;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		582BE6DA1AD92D5C00949BDD /* LaunchScreen.xib */ = {
@@ -261,6 +298,7 @@
 				582BE6DB1AD92D5C00949BDD /* Base */,
 			);
 			name = LaunchScreen.xib;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -425,6 +463,7 @@
 				582BE6ED1AD92D5D00949BDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		582BE6EE1AD92D5D00949BDD /* Build configuration list for PBXNativeTarget "KulizaTechProblemTests" */ = {
 			isa = XCConfigurationList;
@@ -433,6 +472,7 @@
 				582BE6F01AD92D5D00949BDD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

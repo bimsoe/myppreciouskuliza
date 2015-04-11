@@ -8,6 +8,7 @@
 
 #ifndef KulizaTechProblem_Constants_h
 #define KulizaTechProblem_Constants_h
+#import <UIKit/UIKit.h>
 
 #pragma mark - Color Defines
 #define BROWNISH_COLOR  [UIColor colorWithRed:0.749f green:0.4f blue:0.161f alpha:1.0f]
@@ -15,8 +16,6 @@
 #define PINKISH_COLOR   [UIColor colorWithRed:0.969f green:0.925f blue:0.898f alpha:1.0f]
 #define YELLOWISH_COLOR [UIColor colorWithRed:0.957f green:0.957f blue:0.91f alpha:1.0f]
 #define GRAYISH_COLOR   [UIColor colorWithRed:0.733f green:0.733f blue:0.733f alpha:1.0f]
-
-#pragma Font Colors
 #define DARK_BLACK_COLOR        [UIColor blackColor]
 #define LIGHT_BLACK_COLOR       [UIColor colorWithRed:0.4f green:0.4f blue:0.4f alpha:1.0f]
 #define VERY_LIGHT_BLACK_COLOR  [UIColor colorWithRed:0.6f green:0.6f blue:0.6f alpha:1.0f]
@@ -26,5 +25,25 @@
 #define CALL_US_IMG     @"call-us"
 #define LEFT_ARROW_IMG  @"left_arrow"
 #define RIGHT_ARROW_IMG @"right_arrow"
+
+#define MAX_CATEGORIES  5
+
+#define INT2STR(num)  [NSString stringWithFormat:@"%li", (long int)num]
+
+typedef NS_ENUM(short, ProductCategory) {
+  ProductCategory1 = 1,
+  ProductCategory2,
+  ProductCategory3,
+  ProductCategory4,
+  ProductCategory5
+};
+
+#pragma mark - Debug
+#define DEBUG 1
+#if DEBUG
+  #define SM_LOG(FORMAT, ...) printf("%s\n", [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String])
+#else
+  #define SM_LOG(...)
+#endif
 
 #endif
