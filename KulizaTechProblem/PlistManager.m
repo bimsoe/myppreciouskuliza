@@ -27,6 +27,8 @@
                                                                               pathForResource:@"FetchAPIs"
                                                                               ofType:@"plist"]];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
+    _reachability = [Reachability reachabilityForInternetConnection];
+    [self.reachability startNotifier];
   }
   return self;
 }
@@ -84,6 +86,11 @@
 - (UIImage *)imageForProduct:(NSInteger)pId
 {
   return [UIImage imageWithContentsOfFile:[self pathForImageOfProduct:pId]];
+}
+
+- (UIImage *)getReloadImage
+{
+  return [UIImage imageNamed:RELOAD_ICON];
 }
 
 @end

@@ -13,6 +13,9 @@
 #define MAX_PARALLEL_REQUEST  5
 
 @interface ServerDataManager () <NSURLSessionDataDelegate>
+{
+  CompletionBlockVoid fetchCompletionBlock;
+}
 @property (nonatomic, strong) NSURLSession *serverSession;
 @property (nonatomic, strong) NSURLSession *imageDownloadSession;
 @property (nonatomic, strong) NSOperationQueue *fetchQueue;
@@ -50,7 +53,7 @@
   _currentImageDownloads = [NSMutableArray arrayWithCapacity:5];//say
   _serverSession = [self createURLSessionWithDelegateQueue:self.fetchQueue];
   _imageDownloadSession = [self createURLSessionWithDelegateQueue:self.imageQueue];
-  
+  fetchCompletionBlock = nil;
   
 //initialized in plist
 //https://stg1­hercules.urbanladder.com/api/variants?token=107fd0a0fc914faa981c90588cf7fe6dbd8cdd5578c83
@@ -88,12 +91,13 @@
 }
 
 
-- (void)fetchProductsForAllCategories:(id<ServerDataReceiver>)receiver
+- (void)fetchProductsForAllCategories:(id<ServerDataReceiver>)receiver completionBlock:(CompletionBlockVoid)completion
 {
   self.serverDataReceiver = receiver;
   for (short i = ProductCategory1; i <= ProductCategoryCount; i++) {
     [self fetchProductsForCategory:i receiver:nil];
   }
+  fetchCompletionBlock = completion;
 }
 
 - (void)fetchProductsForCategory:(ProductCategory)category receiver:(id<ServerDataReceiver>)receiver
@@ -186,6 +190,11 @@
         [self.currentImageDownloads removeObject:@(d_id)];
         [self.serverDataReceiver imageDownloadedAtLocation:imagePath forProduct:d_id];
       }
+    
+    if (self.currentDataTasks.count == 0 && fetchCompletionBlock) {
+      fetchCompletionBlock();
+      fetchCompletionBlock = nil;
+    }
     PS_LOG(@"Receiver Notified : dataArray %i: location %@: error %@: d_id %i", (int)dataArray.count, location.absoluteString, error.localizedDescription, (int)d_id);
     }];
 }

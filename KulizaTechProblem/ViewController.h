@@ -10,7 +10,7 @@
 
 @interface ViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UICollectionView *productsCollectionView;
-
+@property (copy, nonatomic) NSString *pageHeadingText; //e.g. DINING TABLES & SETS
 
 @end
 

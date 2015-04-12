@@ -8,8 +8,10 @@
 
 #import "ViewController.h"
 #import "ProductView.h"
+#import "TopView.h"
 #import "ServerDataManager.h"
 #import "PlistManager.h"
+#import "ErrorViewController.h"
 
 NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identifier";
 
@@ -19,9 +21,12 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #define ZEROTH_INDEXPATH(indexPath) [NSIndexPath indexPathForItem:0 inSection:indexPath.section]
 @interface ViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, ProductDatasource, ProductDelegate, UICollectionViewDelegateFlowLayout, UIContentContainer, ServerDataReceiver>
 {
-  UILabel *headerLabel;
+  TopView *headerTopView;
   UIRefreshControl *refreshControl;
+  __weak ErrorViewController *errorVC;
 }
+
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *fetchLoadingIndicator;
 @property (nonatomic, strong) NSMutableDictionary *productsDictionary; /**< Contains {category:[array of product]} pair} */
 @property (nonatomic, strong) NSMutableDictionary *currentlyShownIndexPaths; /**< Contains {category:itemIndexPath pair; Each item refers to the index of Product in its products array */
 @property (nonatomic, strong) NSMutableArray *categoryToSectionMapping;/**< Each index represents a section and object there represent the category */
@@ -42,6 +47,19 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   [self setUpCollectionView];
   [self addPullToRefresh];
   [self refreshView];
+  //for network failure
+  [[NSNotificationCenter defaultCenter] addObserverForName:kReachabilityChangedNotification object:nil queue:nil usingBlock:^(NSNotification *note) {
+    PS_LOG(@"Reachability Changed : %ld", (long)[PlistManager sharedManager].reachability.currentReachabilityStatus);
+    if ([PlistManager sharedManager].reachability.currentReachabilityStatus == NotReachable) {
+      //show error message
+      [self showErrorViewController];
+    } else {
+      [self refreshView];
+    }
+  }];
+  
+  _pageHeadingText = @"DINING TABLES & SETS";
+  
 }
 
 - (void)setUpCollectionView
@@ -79,6 +97,9 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 - (void)viewWillAppear:(BOOL)animated
 {
   [super viewWillAppear:animated];
+  if ([PlistManager sharedManager].reachability.currentReachabilityStatus == NotReachable && self.productsDictionary.allKeys.count == 0) {
+    [self showErrorViewController];
+  }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -89,7 +110,7 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 
 - (void)addPullToRefresh
 {
-  refreshControl= [[UIRefreshControl alloc] init];
+  refreshControl= [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, -10, 200, 50)];
   refreshControl.attributedTitle = [[NSAttributedString alloc] initWithString:@"Pull to Refresh"];
   [refreshControl addTarget:self action:@selector(refreshView) forControlEvents:UIControlEventValueChanged];
   [self.productsCollectionView addSubview:refreshControl];
@@ -97,7 +118,12 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 
 - (void)refreshView
 {
-  [[ServerDataManager sharedManager] fetchProductsForAllCategories:self];
+  [[ServerDataManager sharedManager] fetchProductsForAllCategories:self completionBlock:^{
+    //done fetching
+    if (self.productsDictionary.allKeys.count == 0) {
+      [self showErrorViewController];
+    }
+  }];
 }
 
 
@@ -151,17 +177,16 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
   CGSize screenSize = [ViewController screenSize];
-  CGRect frame = headerLabel.frame;
+  CGRect frame = headerTopView.frame;
   frame.size.width = screenSize.width;
-  [headerLabel setFrame:frame];
-
+  [headerTopView setFrame:frame];
 }
 #pragma mark UIContentContainer Protocol
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-  CGRect frame = headerLabel.frame;
-  frame.size.width = size.width;
-  [headerLabel setFrame:frame];
+//  CGRect frame = headerLabel.frame;
+//  frame.size.width = size.width;
+//  [headerLabel setFrame:frame];
 #if DEBUG
   [self.productsCollectionView.layer setBorderColor:[UIColor redColor].CGColor];
   [self.productsCollectionView.layer setBorderWidth:1.0f];
@@ -212,7 +237,13 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #pragma mark UICollectionView DataSource
 - (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
-  PS_LOG(@"numberOfSectionsInCollectionView : %i", self.productsDictionary.allKeys.count);
+  int keysCount = (int)self.productsDictionary.allKeys.count;
+  PS_LOG(@"numberOfSectionsInCollectionView : %i", keysCount);
+  if (keysCount) {
+    [self.fetchLoadingIndicator stopAnimating];
+  } else {
+    [self.fetchLoadingIndicator startAnimating];
+  }
   return self.productsDictionary.allKeys.count;
   //I'll be treating each category as one item (as oppose to each category as a separate section) because there is just one product
 }
@@ -255,16 +286,15 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
                                                                        withReuseIdentifier:ProductCollectionHeaderIdentifier
                                                                               forIndexPath:indexPath];
   static NSInteger HeaderLabelTag = 101;
-  if (headerLabel == nil) {
+  if (headerTopView == nil) {
     //add label
-    headerLabel = [[UILabel alloc] initWithFrame: CGRectMake(0, 0, collectionView.frame.size.width, 30.0f)];
-    [headerLabel setTextAlignment:NSTextAlignmentCenter];
-    [headerLabel setTag:HeaderLabelTag];//so that we dont add it over and over again
-    [headerView addSubview:headerLabel];
-    [headerLabel setCenter:headerView.center];
+    headerTopView = [TopView getTopView];// [[UILabel alloc] initWithFrame: CGRectMake(0, 0, collectionView.frame.size.width, 30.0f)];
+    [headerTopView setTag:HeaderLabelTag];//so that we dont add it over and over again
+    [headerView addSubview:headerTopView];
+    [headerTopView setCenter:headerView.center];
   }
   //text can be updated based on what group are we seeing
-  [headerLabel setText:@"DINING TABLES & SETS"];
+  [headerTopView.headerLabel setText:self.pageHeadingText];
   return headerView;
 }
 
@@ -335,8 +365,15 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 - (void)buyButtonPressedForProductAtIndexPath:(NSIndexPath *)indexPath
 {
   ProductData *product = GET_PRODUCT_AT_INDEXPATH(indexPath);
-  NSString *message = [NSString stringWithFormat:@"%@ was added to cart!!", product.productName];
-  NSString *title = @"Added to Cart";
+  NSString *title = nil;
+  NSString *message = nil;
+  if (product.inStock) {
+    title = @"Added to Cart";
+    message = [NSString stringWithFormat:@"%@ was added to cart!!", product.productName];
+  } else {
+    title = @"Out of Stock";
+    message = [NSString stringWithFormat:@"%@ is out of stock. Check back soon", product.productName];
+  }
   [self showAlertWithTitle:title message:message];
 }
 
@@ -460,11 +497,36 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
     [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
       //You can add some code here for more customization
     }]];
+    [self presentViewController:alert animated:YES completion:nil];
   } else {
     //the good old UIAlertView
     [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil] show];
   }
 }
+
+
+- (void)showErrorViewController
+{
+  ErrorViewController *errorViewController = errorVC;
+  NSString *errorMessage = nil;
+  if([PlistManager sharedManager].reachability.currentReachabilityStatus == NotReachable) {
+    errorMessage =@"You have lost Internet Connectivity!";
+  } else {
+    errorMessage = @"There is nothing to display!!";
+  }
+
+  if (errorViewController == nil) {
+    errorViewController = [self.storyboard instantiateViewControllerWithIdentifier:ErrorViewControllerStoryboardID];
+    [errorVC.errorMessage setText:errorMessage];
+    [self presentViewController:errorViewController animated:YES completion:^{
+      errorVC = errorViewController;
+    }];
+  } else {
+    [errorVC.errorMessage setText:errorMessage];
+  }
+
+}
+
 @end
 
 

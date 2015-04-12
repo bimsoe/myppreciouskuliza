@@ -11,12 +11,12 @@
 
 #pragma mark -
 @protocol ProductDelegate <NSObject>
-@required
-- (void)buyButtonPressedForProductAtIndexPath:(NSIndexPath *)indexPath;
 @optional
+- (void)buyButtonPressedForProductAtIndexPath:(NSIndexPath *)indexPath;
 - (void)showAllProductsButtonPressed:(NSIndexPath *)indexPath;
 - (void)nextProductButtonPressed:(NSIndexPath *)indexPath;
 - (void)previousProductButtonPressed:(NSIndexPath *)indexPath;
+- (void)requestReloadForProductAtIndexPath:(NSIndexPath *)indexPath;
 @end
 
 #pragma mark -
@@ -38,10 +38,12 @@ FOUNDATION_EXPORT NSString *ProductCellIdentifier;
 @interface ProductView : UIView
 @property (weak, nonatomic) IBOutlet UILabel *productHeading;
 @property (weak, nonatomic) IBOutlet UIButton *viewAllProducts;
+@property (weak, nonatomic) IBOutlet UIButton *buyNowButton;
 @property (weak, nonatomic) IBOutlet UIImageView *productImage;
 @property (weak, nonatomic) IBOutlet UILabel *productSubtitle;
 @property (weak, nonatomic) IBOutlet UILabel *productExtraInfo;
 @property (weak, nonatomic) IBOutlet UILabel *productPrice;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *loadingIndicator;
 @property (copy, nonatomic) NSIndexPath *productIndexPath;
 @property (weak, nonatomic) id<ProductDelegate> delegate;
 @property (weak, nonatomic) id<ProductDatasource> dataSource;

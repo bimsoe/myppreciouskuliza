@@ -22,7 +22,7 @@
 @interface ServerDataManager : NSObject
 @property (nonatomic, weak) id<ServerDataReceiver> serverDataReceiver;/**< Right now kept just one; otherwise we can have a dictionary with @{category:array of receivers} pair */
 + (instancetype)sharedManager;
-- (void)fetchProductsForAllCategories:(id<ServerDataReceiver>)receiver;
+- (void)fetchProductsForAllCategories:(id<ServerDataReceiver>)receiver completionBlock:(CompletionBlockVoid)completion;
 - (void)fetchProductsForCategory:(ProductCategory)category receiver:(id<ServerDataReceiver>)receiver;
 - (BOOL)isFetchingProductsForCategory:(ProductCategory)category;
 - (void)downloadImageForProduct:(ProductData *)product;

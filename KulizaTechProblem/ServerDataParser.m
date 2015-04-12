@@ -53,6 +53,7 @@ NSString * const PD_ProductsKey                     = @"products"; //returns NSA
   productData.productDisplayPrice = jsonDictionary[PD_ProductDisplayPriceKey];
   productData.productDiscountedPrice = [jsonDictionary[PD_ProductDicountPriceKey] unsignedIntegerValue];
   productData.productDisplayDiscountedPrice = jsonDictionary[PD_ProductDisplayDiscountPriceKey];
+  productData.inStock = [jsonDictionary[PD_ProductInStockKey] boolValue];
   NSDictionary *imageDict = jsonDictionary[PD_ProductImageKey];
   productData.productImageURL = [NSURL URLWithString:imageDict[PD_ProductImageURL]];
   NSArray *optionValues = jsonDictionary[PD_ProductOptionValuesKey];

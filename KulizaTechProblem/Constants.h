@@ -18,15 +18,20 @@
 #define GRAYISH_COLOR   [UIColor colorWithRed:0.733f green:0.733f blue:0.733f alpha:1.0f]
 #define DARK_BLACK_COLOR        [UIColor blackColor]
 #define LIGHT_BLACK_COLOR       [UIColor colorWithRed:0.4f green:0.4f blue:0.4f alpha:1.0f]
-#define VERY_LIGHT_BLACK_COLOR  [UIColor colorWithRed:0.6f green:0.6f blue:0.6f alpha:1.0f]
+#define EXTRA_LIGHT_BLACK_COLOR  [UIColor colorWithRed:0.6f green:0.6f blue:0.6f alpha:1.0f]
 
 #pragma mark - Image Defines
 #define BUY_NOW_IMG     @"buy-now"
 #define CALL_US_IMG     @"call-us"
 #define LEFT_ARROW_IMG  @"left_arrow"
 #define RIGHT_ARROW_IMG @"right_arrow"
+#define RELOAD_ICON     @"reload-icon"
 
+
+#define GET_FONT(size) [UIFont systemFontOfSize:size]
 #define MAX_CATEGORIES  5
+
+typedef void(^CompletionBlockVoid)(void);
 
 #define INT2STR(num)  [NSString stringWithFormat:@"%li", (long int)num]
 
@@ -41,7 +46,7 @@ typedef NS_ENUM(short, ProductCategory) {
 };
 
 #pragma mark - Debug
-#define DEBUG 1
+#define DEBUG 0
 #if DEBUG
   #define PS_LOG(FORMAT, ...) printf("%s\n", [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String])
 #else

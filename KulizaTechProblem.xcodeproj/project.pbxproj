@@ -17,6 +17,10 @@
 		586AFE5C1AD9398A003DA6A3 /* ProductView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 586AFE5B1AD9398A003DA6A3 /* ProductView.xib */; };
 		586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */ = {isa = PBXBuildFile; fileRef = 586AFE5F1AD940B2003DA6A3 /* ProductView.m */; };
 		586AFE631AD942BB003DA6A3 /* ProductData.m in Sources */ = {isa = PBXBuildFile; fileRef = 586AFE621AD942BB003DA6A3 /* ProductData.m */; };
+		5884ADD51ADA467A005381B4 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 5884ADD41ADA467A005381B4 /* Reachability.m */; };
+		5884ADD81ADA490B005381B4 /* ErrorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5884ADD71ADA490B005381B4 /* ErrorViewController.m */; };
+		5884ADDB1ADA5EED005381B4 /* TopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5884ADDA1ADA5EED005381B4 /* TopView.m */; };
+		5884ADDD1ADA5EFD005381B4 /* TopView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5884ADDC1ADA5EFD005381B4 /* TopView.xib */; };
 		58AE88771AD94876000875E4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AE88761AD94876000875E4 /* UIKit.framework */; };
 		58AE887B1AD96CD3000875E4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AE887A1AD96CD2000875E4 /* QuartzCore.framework */; };
 		58AE887F1AD9896F000875E4 /* ServerDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AE887E1AD9896F000875E4 /* ServerDataManager.m */; };
@@ -55,6 +59,13 @@
 		586AFE5F1AD940B2003DA6A3 /* ProductView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductView.m; sourceTree = "<group>"; };
 		586AFE611AD942BB003DA6A3 /* ProductData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductData.h; sourceTree = "<group>"; };
 		586AFE621AD942BB003DA6A3 /* ProductData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductData.m; sourceTree = "<group>"; };
+		5884ADD31ADA467A005381B4 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		5884ADD41ADA467A005381B4 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		5884ADD61ADA490B005381B4 /* ErrorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorViewController.h; sourceTree = "<group>"; };
+		5884ADD71ADA490B005381B4 /* ErrorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ErrorViewController.m; sourceTree = "<group>"; };
+		5884ADD91ADA5EED005381B4 /* TopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TopView.h; path = ../Resources/TopView.h; sourceTree = "<group>"; };
+		5884ADDA1ADA5EED005381B4 /* TopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TopView.m; path = ../Resources/TopView.m; sourceTree = "<group>"; };
+		5884ADDC1ADA5EFD005381B4 /* TopView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TopView.xib; sourceTree = "<group>"; };
 		58AE88761AD94876000875E4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		58AE887A1AD96CD2000875E4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		58AE887D1AD9896F000875E4 /* ServerDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerDataManager.h; sourceTree = "<group>"; };
@@ -118,6 +129,8 @@
 				582BE6D31AD92D5C00949BDD /* ViewController.m */,
 				582BE6CB1AD92D5C00949BDD /* Supporting Files */,
 				582BE6F11AD92E0100949BDD /* Constants.h */,
+				5884ADD61ADA490B005381B4 /* ErrorViewController.h */,
+				5884ADD71ADA490B005381B4 /* ErrorViewController.m */,
 			);
 			path = KulizaTechProblem;
 			sourceTree = "<group>";
@@ -151,6 +164,8 @@
 		586AFE5D1AD940A2003DA6A3 /* CustomUI */ = {
 			isa = PBXGroup;
 			children = (
+				5884ADD91ADA5EED005381B4 /* TopView.h */,
+				5884ADDA1ADA5EED005381B4 /* TopView.m */,
 				586AFE5E1AD940B2003DA6A3 /* ProductView.h */,
 				586AFE5F1AD940B2003DA6A3 /* ProductView.m */,
 				586AFE611AD942BB003DA6A3 /* ProductData.h */,
@@ -162,12 +177,14 @@
 		58AE887C1AD98940000875E4 /* NetworkStuff */ = {
 			isa = PBXGroup;
 			children = (
+				5884ADD31ADA467A005381B4 /* Reachability.h */,
+				5884ADD41ADA467A005381B4 /* Reachability.m */,
 				58AE887D1AD9896F000875E4 /* ServerDataManager.h */,
 				58AE887E1AD9896F000875E4 /* ServerDataManager.m */,
 				58AE88801AD989D1000875E4 /* ServerDataParser.h */,
 				58AE88811AD989D1000875E4 /* ServerDataParser.m */,
-				58AE88851AD9A279000875E4 /* PlistManager.h */,
 				58AE88861AD9A279000875E4 /* PlistManager.m */,
+				58AE88851AD9A279000875E4 /* PlistManager.h */,
 			);
 			name = NetworkStuff;
 			sourceTree = "<group>";
@@ -180,6 +197,7 @@
 				582BE6D51AD92D5C00949BDD /* Main.storyboard */,
 				586AFE5B1AD9398A003DA6A3 /* ProductView.xib */,
 				58AE88831AD9A1EF000875E4 /* FetchAPIs.plist */,
+				5884ADDC1ADA5EFD005381B4 /* TopView.xib */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -265,6 +283,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5884ADDD1ADA5EFD005381B4 /* TopView.xib in Resources */,
 				58AE88841AD9A1EF000875E4 /* FetchAPIs.plist in Resources */,
 				586AFE5C1AD9398A003DA6A3 /* ProductView.xib in Resources */,
 				582BE6D71AD92D5C00949BDD /* Main.storyboard in Resources */,
@@ -290,10 +309,13 @@
 				58AE88871AD9A279000875E4 /* PlistManager.m in Sources */,
 				58AE887F1AD9896F000875E4 /* ServerDataManager.m in Sources */,
 				586AFE601AD940B2003DA6A3 /* ProductView.m in Sources */,
+				5884ADDB1ADA5EED005381B4 /* TopView.m in Sources */,
 				58AE88821AD989D1000875E4 /* ServerDataParser.m in Sources */,
 				582BE6D41AD92D5C00949BDD /* ViewController.m in Sources */,
+				5884ADD81ADA490B005381B4 /* ErrorViewController.m in Sources */,
 				582BE6D11AD92D5C00949BDD /* AppDelegate.m in Sources */,
 				586AFE631AD942BB003DA6A3 /* ProductData.m in Sources */,
+				5884ADD51ADA467A005381B4 /* Reachability.m in Sources */,
 				582BE6CE1AD92D5C00949BDD /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -430,6 +452,7 @@
 				INFOPLIST_FILE = KulizaTechProblem/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -443,6 +466,7 @@
 				INFOPLIST_FILE = KulizaTechProblem/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
