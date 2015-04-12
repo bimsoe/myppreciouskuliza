@@ -184,9 +184,9 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 #pragma mark UIContentContainer Protocol
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-//  CGRect frame = headerLabel.frame;
-//  frame.size.width = size.width;
-//  [headerLabel setFrame:frame];
+  CGRect frame = headerTopView.frame;
+  frame.size.width = size.width;
+  [headerTopView setFrame:frame];
 #if DEBUG
   [self.productsCollectionView.layer setBorderColor:[UIColor redColor].CGColor];
   [self.productsCollectionView.layer setBorderWidth:1.0f];
@@ -316,17 +316,6 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
   return CGSizeZero;
 }
 
-//- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-//{
-//  if(GET_PRODUCTS_AT_SECTION(indexPath.section).count == 0) {
-//    //for others nil
-//    return CGSizeZero;
-//  }
-//  
-//  
-//  return ((UICollectionViewFlowLayout *)self.productsCollectionView.collectionViewLayout).itemSize;
-//}
-
 
 #pragma mark - 
 #pragma mark - ProductDatasource
@@ -381,6 +370,12 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
 {
   //get the category
   //invalidate the collection view and remove all other sections and keep only one that is for category
+}
+
+
+- (void)requestReloadForProductAtIndexPath:(NSIndexPath *)indexPath
+{
+  [[ServerDataManager sharedManager] downloadImageForProduct:GET_PRODUCT_AT_INDEXPATH(indexPath)];
 }
 
 
@@ -467,7 +462,9 @@ NSString *ProductCollectionHeaderIdentifier = @"product_collection_header_identi
     }
   }];
   if (matchingIndexPath) {
-    [((ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:matchingIndexPath]).productView refresh:nil];
+    [self.productsCollectionView reloadSections:[NSIndexSet indexSetWithIndex:matchingIndexPath.section]];
+//    ProductViewCell *pCell = (ProductViewCell *)[self.productsCollectionView cellForItemAtIndexPath:matchingIndexPath];
+//    [pCell.productView refresh:nil];
   }
 }
 

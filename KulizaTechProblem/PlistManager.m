@@ -69,7 +69,12 @@
 - (NSString *)writeImageData:(NSData *)imageData forProduct:(NSInteger)pId
 {
   NSString *path = [self pathForImageOfProduct:pId];
-  BOOL success = [imageData writeToFile:path atomically:YES];
+  if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+    [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+  }
+  
+  BOOL success = [[NSFileManager defaultManager] createFileAtPath:path contents:imageData attributes:nil];
+//   = [imageData writeToFile:path atomically:YES];
   if (success) {
     return path;
   }

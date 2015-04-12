@@ -155,11 +155,17 @@
   NSURLSessionDownloadTask *imageDownloadTask =
   [self.imageDownloadSession downloadTaskWithURL:product.productImageURL
                                completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+                                 NSString *imagePath = nil;
                                  if (error) {
                                    PS_LOG(@"Some Error Occurred While Downloading image for product : %@; %@", product.                              productName, error);
+                                 } else {
+                                   //image downloaded
+                                   //write to file
+                                   imagePath = [[PlistManager sharedManager] writeImageData:[NSData dataWithContentsOfURL:location] forProduct:product.productId];
+
                                  }
                                  [self notifyReceiverWithDataArray:nil
-                                                     imageLocation:location
+                                                     imageLocation:imagePath
                                                              error:error
                                                              forId:product.productId];
                                }];
@@ -172,7 +178,7 @@
 }
 
 
-- (void)notifyReceiverWithDataArray:(NSArray *)dataArray imageLocation:(NSURL *)location error:(NSError *)error forId:(NSInteger)d_id
+- (void)notifyReceiverWithDataArray:(NSArray *)dataArray imageLocation:(NSString *)location error:(NSError *)error forId:(NSInteger)d_id
 {
   [[NSOperationQueue mainQueue] addOperationWithBlock:^{
       if (error) {
@@ -185,10 +191,8 @@
         [self.currentDataTasks removeObject:@(d_id)];
       } else {
         //image downloaded
-        //write to file
-        NSString *imagePath = [[PlistManager sharedManager] writeImageData:[NSData dataWithContentsOfURL:location] forProduct:d_id];
         [self.currentImageDownloads removeObject:@(d_id)];
-        [self.serverDataReceiver imageDownloadedAtLocation:imagePath forProduct:d_id];
+        [self.serverDataReceiver imageDownloadedAtLocation:location forProduct:d_id];
       }
     
     if (self.currentDataTasks.count == 0 && fetchCompletionBlock) {

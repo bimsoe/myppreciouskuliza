@@ -46,6 +46,7 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
 @property (weak, nonatomic) IBOutlet UIView *bottomView;
 @property (weak, nonatomic) IBOutlet UIButton *previousProductButton;
 @property (weak, nonatomic) IBOutlet UIButton *nextProductButton;
+@property (weak, nonatomic) IBOutlet UIButton *reloadIcon;
 
 @end
 
@@ -73,6 +74,11 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   [self.productSubtitle setTextColor:EXTRA_LIGHT_BLACK_COLOR];
   [self.productExtraInfo setTextColor:EXTRA_LIGHT_BLACK_COLOR];
   [self.productPrice setTextColor:BROWNISH_COLOR];
+#if DEBUG
+  [self.reloadIcon setHidden:NO];
+#else
+  [self.reloadIcon setHidden:YES];
+#endif
 }
 
 
@@ -146,6 +152,7 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
 - (void)updateWithProductData:(ProductData *)product_data
 {
   productData = product_data;
+  [self.loadingIndicator stopAnimating];
   [self.productHeading setText:productData.productName];
   [self setImageReloadIcon];
 
@@ -170,6 +177,8 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
     [self.productExtraInfo setHidden:YES];
   }
   
+  [self.buyNowButton setAlpha:(productData.inStock ? 1.0f : 0.5f)];
+  
   
   [self.previousProductButton setHidden:![self.dataSource shouldDisplayPreviousProductButtonForProductAtIndexPath:self.productIndexPath]];
   [self.nextProductButton setHidden:![self.dataSource shouldDisplayNextProductButtonForProductAtIndexPath:self.productIndexPath]];
@@ -182,7 +191,6 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   UIImage *imageToSet = productData.productImage;
   if (imageToSet) {
     //hide indicator
-    [self.loadingIndicator stopAnimating];
     [self.productImage removeGestureRecognizer:tapGesture];
   } else {
     //use default
@@ -195,7 +203,7 @@ NSString *ProductCellIdentifier = @"product_cell_identifier";
   [self.productImage setImage:imageToSet];
 }
 
-- (void)requestReload
+- (IBAction)requestReload
 {
   if ([self.delegate respondsToSelector:@selector(requestReloadForProductAtIndexPath:)]) {
     [self.delegate requestReloadForProductAtIndexPath:self.productIndexPath];
